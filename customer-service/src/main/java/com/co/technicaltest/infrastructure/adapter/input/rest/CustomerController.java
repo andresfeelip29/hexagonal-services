@@ -168,7 +168,7 @@ public class CustomerController {
             @Valid @RequestBody CustomerRequestDTO customerRequestDTO, @PathVariable UUID customerId) {
         Customer customer =
                 this.customerDTOMapper.customerRequestDTOCustomer(customerRequestDTO);
-        return this.customerUseCase.saveCustomer(customer)
+        return this.customerUseCase.updateCustomer(customer, customerId)
                 .map(result ->
                         ResponseEntity.status(HttpStatus.OK)
                                 .contentType(MediaType.APPLICATION_JSON)

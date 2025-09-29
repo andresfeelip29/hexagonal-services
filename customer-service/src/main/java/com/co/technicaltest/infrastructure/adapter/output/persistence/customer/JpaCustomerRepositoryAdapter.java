@@ -7,6 +7,7 @@ import com.co.technicaltest.infrastructure.mapper.CostumerMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,9 +48,10 @@ public class JpaCustomerRepositoryAdapter implements CustomerRepositoryPort {
      */
     @Override
     public Optional<Customer> findByCustomerId(UUID id) {
-
         CustomerEntity customerEntity =
                 this.repository.findCustomerEntitiesByCustomerId(id);
+
+        if (Objects.isNull(customerEntity)) return Optional.empty();
 
         return Optional.of(this.costumerMapper.customerEntityToCustomer(customerEntity));
     }
@@ -97,9 +99,9 @@ public class JpaCustomerRepositoryAdapter implements CustomerRepositoryPort {
      * {@inheritDoc}
      */
     @Override
-    public void deleteCustomer(Customer customer) {
+    public void deleteCustomer(UUID customerId) {
         CustomerEntity customerEntity =
-                this.costumerMapper.toCustomerEntity(customer);
+                this.repository.findCustomerEntitiesByCustomerId(customerId);
         this.repository.delete(customerEntity);
     }
 }

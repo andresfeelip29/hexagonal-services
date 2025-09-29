@@ -58,8 +58,8 @@ public interface CustomerRepositoryPort {
     /**
      * Method for delete customer
      *
-     * @param customer data information.
+     * @param customerId ID customer.
      */
-    void deleteCustomer(Customer customer);
+    void deleteCustomer( UUID customerId);
 
 }

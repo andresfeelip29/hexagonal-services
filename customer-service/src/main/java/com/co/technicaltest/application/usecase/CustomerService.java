@@ -70,6 +70,7 @@ public class CustomerService implements CustomerUseCase {
     /**
      * {@inheritDoc}
      */
+    @Transactional(readOnly = true)
     @Override
     public Optional<CustomerResponseDTO> findUserByCustomerId(UUID customerId) {
 
@@ -85,6 +86,7 @@ public class CustomerService implements CustomerUseCase {
     /**
      * {@inheritDoc}
      */
+    @Transactional
     @Override
     public Optional<CustomerResponseDTO> saveCustomer(Customer customer) {
 
@@ -103,6 +105,7 @@ public class CustomerService implements CustomerUseCase {
     /**
      * {@inheritDoc}
      */
+    @Transactional
     @Override
     public Optional<CustomerResponseDTO> updateCustomer(Customer customer, UUID id) {
 
@@ -118,16 +121,14 @@ public class CustomerService implements CustomerUseCase {
     /**
      * {@inheritDoc}
      */
+    @Transactional
     @Override
     public void deleteCustomer(UUID customerId) {
 
         log.info("Metodo: {}, para eliminar cliente por id: {}",
                 "[deleteCustomer]", customerId.toString());
 
-        Customer customer = this.repository.findByCustomerId(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException(
-                        String.format(ExceptionMessage.USER_NOT_FOUND.getMessage(), customerId.toString())));
-        this.repository.deleteCustomer(customer);
+        this.repository.deleteCustomer(customerId);
 
     }
 
