@@ -1,6 +1,6 @@
 # Microservices with Spring Boot
 
-Este proyecto implementa una arquitectura de microservicios usando **Spring Boot**, desplegados con **Docker Compose**, que simula un sistema de e-commerce con autenticación, catálogo de productos, órdenes, inventario y notificaciones.
+Este proyecto implementa una arquitectura de microservicios usando **Spring Boot**, desplegados con **Docker Compose**, que simula un sistema de bancario con autenticación, clientes, cuentas, y transacciones.
 
 ## 📌 Arquitectura
 
