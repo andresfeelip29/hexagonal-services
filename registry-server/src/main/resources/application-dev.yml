@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: registry-service
+
+server:
+  port: 8761
+
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+  #instance:
+    #hostname: localhost
+   # prefer-ip-address: false
+
+
+
+logging:
+  file:
+    path: /app/logs
+
+
+
+
+
