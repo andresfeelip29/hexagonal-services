@@ -66,5 +66,28 @@ management:
       base-path: /actuator
 
 
+#Kafka config server
+kafka-config:
+  bootstrapServers: kafka:9092
 
+#kafka cncofig consumer
+kafka-consumer-config:
+  keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+  valueDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+  autoOffsetReset: earliest
+  sessionTimeoutMs: 10000
+  heartbeatIntervalMs: 3000
+  maxPollIntervalMs: 300000
+  maxPartitionFetchBytesDefault: 1048576
+  maxPartitionFetchBytesBoostFactor: 1
+  maxPollRecords: 500
+  batchListener: false
+  concurrencyLevel: 3
+  autoStartup: true
+  pollTimeoutMs: 3000
 
+#Topics kafka
+customer-service:
+  customer-topic-name: customer-events
+  customer-spring-id: customer-topic-listener
+  customer-group-id: customer-topic-group

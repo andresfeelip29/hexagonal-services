@@ -11,6 +11,7 @@ public enum ExceptionMessage {
     USER_NOT_FOUND("No existe usuario registrado en sistema con id: %d!"),
     USERNAME_NOT_FOUND("No existe usuario registrado en sistema con nombre de usuario: %s!"),
     ACCOUNT_NOT_FOUND("No existe cuenta registrada en sistema con id: %d!"),
+    ACCOUNT_ASSOCIATED_ERROR("No se pudo almacenar cuenta id: %d , a cliente con id: %d!"),
     ACCOUNT_NUMBER_NOT_FOUND("No existe cuenta registrada con numero de cuenta: %s!"),
     ACCOUNT_ASSOCIATED_TO_CLIENT_NO_FOUND("No existe una cuenta con id: %d , asociado a algun usuario en microservicio de usuarios!"),
     ACCOUNT_NUMBER_ASSOCIATED_TO_CLIENT_NO_FOUND("No existe una cuenta con numero: %s , asociado a algun usuario en microservicio de usuarios!"),

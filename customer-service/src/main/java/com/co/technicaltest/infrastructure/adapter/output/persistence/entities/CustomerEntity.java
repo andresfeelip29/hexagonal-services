@@ -46,5 +46,13 @@ public class CustomerEntity extends PersonEntity {
     @OneToMany(mappedBy = "customerId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AccountEntity> accounts;
 
+    public void removeAccount(AccountEntity account) {
+        this.accounts.remove(account);
+    }
+
+    public void addAccount(AccountEntity account) {
+        this.accounts.add(account);
+    }
+
 
 }

@@ -8,6 +8,7 @@
         <module>auth-service</module>
         <module>registry-server</module>
         <module>customer-service</module>
+        <module>account-service</module>
     </modules>
 
     <parent>

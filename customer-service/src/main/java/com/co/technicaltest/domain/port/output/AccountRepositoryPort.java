@@ -2,6 +2,7 @@ package com.co.technicaltest.domain.port.output;
 
 import com.co.technicaltest.domain.model.Account;
 
+import java.util.UUID;
 
 
 /**
@@ -24,7 +25,8 @@ public interface AccountRepositoryPort {
      * Method to save the account.
      *
      * @param account domain data for account.
+     * @param customerId customer id.
      * @return Account domain data for account
      */
-    Account saveAccount(Account account);
+    Account saveAccount(Account account, UUID customerId);
 }

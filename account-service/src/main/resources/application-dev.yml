@@ -1,0 +1,122 @@
+spring:
+  application:
+    name: account-service
+  #Data base config
+  datasource:
+    password: ${DB_PASSWORD:sasa}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:postgres}
+    url: jdbc:postgresql://${DB_HOST:localhost:5432}/${DATA_BASE:db_cuenta}
+  jpa:
+    generate-ddl: 'true'
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: 'true'
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+ #Message config validation
+  messages:
+    basename: validation-messages
+
+
+#Oauth2 client
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth-service/oauth2/default
+      client:
+        registration:
+          account-service:
+            provider: spring
+            client-id: customer
+            client-secret: 12345
+            authorization-grant-type: authorization_code
+            redirect-uri: http://customer-service/api/v1/usuarios/auth/authorized
+            scope:
+              - openid
+              - profile
+              - read
+              - write
+            client-name: customer-service
+        provider:
+          spring:
+            issuer-uri: http://auth-service/oauth2/default
+
+
+#Port
+server:
+  port: 0
+
+#Eureka Client
+eureka:
+  instance:
+    instance-id: "${spring.application.name}:${random.value}"
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+
+#Log
+logging:
+  file:
+    path: /app/logs
+  level:
+    org:
+      hibernate:
+        SQL: debug
+
+#Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      base-path: /actuator
+
+
+#Kafka config server
+kafka-config:
+  bootstrapServers: kafka:9092
+
+#kafka config consumer
+kafka-consumer-config:
+  keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+  valueDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+  autoOffsetReset: earliest
+  sessionTimeoutMs: 10000
+  heartbeatIntervalMs: 3000
+  maxPollIntervalMs: 300000
+  maxPartitionFetchBytesDefault: 1048576
+  maxPartitionFetchBytesBoostFactor: 1
+  maxPollRecords: 500
+  batchListener: false
+  concurrencyLevel: 3
+  autoStartup: true
+  pollTimeoutMs: 3000
+
+#Kafka producer config
+kafka-producer-config:
+  keySerializer: org.apache.kafka.common.serialization.StringSerializer
+  valueSerializer: org.apache.kafka.common.serialization.StringSerializer
+  acks: all
+  retries: 3
+  batchSize: 16384
+  lingerMs: 5
+  bufferMemory: 33554432
+
+
+  #Topics kafka
+  customer-service:
+    customer-topic-name: customer-events
+    customer-spring-id: customer-topic-listener
+    customer-group-id: customer-topic-group
+
+  transaction-service:
+    transaction-topic-name: transaction-events
+    transaction-spring-id: transaction-topic-listener
+    transaction-group-id: transaction-topic-group

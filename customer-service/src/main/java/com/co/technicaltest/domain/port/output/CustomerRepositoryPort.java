@@ -62,4 +62,12 @@ public interface CustomerRepositoryPort {
      */
     void deleteCustomer( UUID customerId);
 
+
+    /**
+     * Method for delete account form customer
+     *
+     * @param customerId ID customer.
+     */
+    void deleteAccountFromCustomer(UUID customerId, Long accountId);
+
 }

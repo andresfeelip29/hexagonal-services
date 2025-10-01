@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  ### MySQL database for customer
+  # 🔹 MySQL para base de datos de  customer service
   mysql8:
     container_name: mysql8
     image: mysql:8
@@ -14,7 +14,7 @@ services:
     restart: always
     networks:
       - devsu
-  ### Postgres database for account
+  # 🔹 Postgres para base datos de account service
   postgres14:
     container_name: postgres14
     image: postgres:14-alpine
@@ -28,6 +28,7 @@ services:
     restart: always
     networks:
       - devsu
+  # 🔹 Mongo para base de datos de transactional service
   mongodb:
     container_name: mongodb
     image: mongo
@@ -43,6 +44,59 @@ services:
     networks:
       - devsu
 
+  # 🔹 Kafka para la publicacion y obtencion de eventos, de los microservicios account y transactional servcie
+  kafka:
+    image: bitnami/kafka:3.7
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+    volumes:
+      - data-kafka:/bitnami/kafka
+    networks:
+      - devsu
+
+  # 🔹 Servicio que crea los tópicos y se destruye
+  kafka-init-topics:
+    image: bitnami/kafka:3.7
+    depends_on:
+      - kafka
+    restart: "no"     # 👈 no se reinicia
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: |
+        "
+        echo '⏳ Esperando a que Kafka arranque...'
+        sleep 10
+        echo '⚡ Creando tópicos...'
+        /opt/bitnami/kafka/bin/kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:9092 --replication-factor 1 --partitions 3 --topic customer-events
+        /opt/bitnami/kafka/bin/kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:9092 --replication-factor 1 --partitions 3 --topic account-events
+        /opt/bitnami/kafka/bin/kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:9092 --replication-factor 1 --partitions 3 --topic transaction-events
+        echo '✅ Tópicos creados, cerrando contenedor...'
+    networks:
+      - devs
+
+  # 🔹 Servicio para monitore, creacio y modificacion de topicos
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      - KAFKA_BROKERCONNECT=kafka:9092
+    networks:
+      - devs
+
+
 volumes:
   data-mysql:
     name: data-mysql
@@ -50,7 +104,11 @@ volumes:
     name: data-postgres
   data-mongo:
     name: data-mongo
+  data-kafka:
+    name: data-kafka
+
 
 networks:
   devsu:
     name: devsu
+    driver: bridge

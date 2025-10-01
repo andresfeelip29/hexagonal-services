@@ -1,8 +1,10 @@
 package com.co.technicaltest.infrastructure.exception.handler;
 
 
+import com.co.technicaltest.application.exception.BankAccountException;
 import com.co.technicaltest.application.exception.CustomerNotFoundException;
 import com.co.technicaltest.infrastructure.exception.AccountNotFoundException;
+import com.co.technicaltest.infrastructure.exception.PayloaTransformException;
 import com.co.technicaltest.infrastructure.shared.dto.ErrorResponse;
 import com.co.technicaltest.infrastructure.shared.enums.ExceptionMessage;
 import jakarta.validation.ConstraintViolation;
@@ -36,6 +38,18 @@ public class CustomerGlobalExceptionHandler {
     @ExceptionHandler(value = {CustomerNotFoundException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleException(CustomerNotFoundException e) {
+        return this.buildErrorResponse(e, e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {BankAccountException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleException(BankAccountException e) {
+        return this.buildErrorResponse(e, e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {PayloaTransformException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleException(PayloaTransformException e) {
         return this.buildErrorResponse(e, e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

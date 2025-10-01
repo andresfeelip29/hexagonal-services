@@ -3,6 +3,8 @@ package com.co.technicaltest.infrastructure.adapter.output.persistence.customer;
 import com.co.technicaltest.infrastructure.adapter.output.persistence.entities.CustomerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -20,7 +22,7 @@ public interface SpringDataCustomerRespository extends JpaRepository<CustomerEnt
      * @param customerId customer id.
      * @return CustomerEntity entity customer
      */
-    CustomerEntity findCustomerEntitiesByCustomerId(UUID customerId);
+    Optional<CustomerEntity> findCustomerEntitiesByCustomerId(UUID customerId);
 
     /**
      * Method for find customer entity from username

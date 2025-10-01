@@ -44,7 +44,7 @@ public class CustomerService implements CustomerUseCase {
     public List<CustomerResponseDTO> getAllCustomer() {
 
         log.info("Metodo: {}, para obtener todos los clientes",
-                "[getAllCostumer]");
+                "[getAllCustomer]");
 
         return this.repository.findAll().stream()
                 .map(this.customerDTOMapper::toCustomerDTO)
@@ -59,7 +59,7 @@ public class CustomerService implements CustomerUseCase {
     public Optional<CustomerLoginResponseDTO> findCustomerByUsername(String username) {
 
         log.info("Metodo: {}, para obtener cliente por nombre de usuario: {}",
-                "[findUserByUsername]", username);
+                "[findCustomerByUsername]", username);
 
         return Optional.ofNullable(this.repository.findByCustomerUsername(username)
                 .map(this.customerDTOMapper::customerLoginDTO)
