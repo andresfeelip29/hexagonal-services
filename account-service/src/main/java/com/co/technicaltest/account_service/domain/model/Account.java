@@ -1,6 +1,8 @@
 package com.co.technicaltest.account_service.domain.model;
 
 import com.co.technicaltest.account_service.domain.enums.BankAccountType;
+import com.co.technicaltest.account_service.domain.exception.BalanceNegativeException;
+import com.co.technicaltest.account_service.infrastructure.shared.enums.ExceptionMessage;
 import lombok.Builder;
 import lombok.Data;
 
@@ -22,10 +24,16 @@ public class Account {
     private BigDecimal balance;
     private Boolean status;
 
-    public String generateBankAccountNumber() {
+    public void setBankAccountNumber() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        return String.valueOf(random
+        this.accountNumber = String.valueOf(random
                 .nextLong(10_000_000_000L, 100_000_000_000L));
+    }
+
+    public void balanceIsLessThanZero() {
+        if (this.balance.compareTo(BigDecimal.ZERO) < 0)
+            throw new BalanceNegativeException(
+                    ExceptionMessage.BALANCE_NEGATIVE.getMessage());
     }
 
 

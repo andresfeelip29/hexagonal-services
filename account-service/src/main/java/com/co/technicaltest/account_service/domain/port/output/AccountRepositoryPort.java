@@ -58,7 +58,7 @@ public interface AccountRepositoryPort {
      * Method for update balance from domain evento on transactional service
      *
      * @param newBalance new account balance to update.
-     * @param accountId  numeric id for intentificacion account.
+     * @param accountNumber  numeric id for intentificacion account.
      */
-    void updateBalanceAccount(Long accountId, BigDecimal newBalance);
+    void updateBalanceAccount(String accountNumber, BigDecimal newBalance);
 }

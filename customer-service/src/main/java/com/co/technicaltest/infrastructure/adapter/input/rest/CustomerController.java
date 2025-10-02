@@ -152,6 +152,7 @@ public class CustomerController {
      * Endpoint to update customer
      *
      * @param customerRequestDTO  customer data for save .
+     * @param customerId  customer id .
      * @return {@link ResponseEntity<CustomerResponseDTO>} Object of response where the information and result customer.
      */
     @Operation(
@@ -177,7 +178,7 @@ public class CustomerController {
     }
 
     /**
-     * {@code DELETE /} : Request delte customer
+     * {@code DELETE /} : Request delete customer
      *
      * Endpoint to delte customer
      *

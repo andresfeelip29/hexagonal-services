@@ -33,8 +33,14 @@ public class AccountMapper {
                 .accountType(account.getAccountType())
                 .balance(account.getBalance())
                 .status(account.getStatus())
-                .id(account.getAccountId())
                 .build();
+    }
+
+    public AccountEntity updateAccountEntity(AccountEntity accountEntity, Account account) {
+        accountEntity.setAccountType(accountEntity.getAccountType());
+        accountEntity.setBalance(accountEntity.getBalance());
+        accountEntity.setStatus(account.getStatus());
+        return accountEntity;
     }
 
     public List<Account> accountEntityToAccountList(List<AccountEntity> accountEntityList) {
