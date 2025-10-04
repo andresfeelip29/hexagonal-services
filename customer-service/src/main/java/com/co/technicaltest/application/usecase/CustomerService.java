@@ -61,10 +61,8 @@ public class CustomerService implements CustomerUseCase {
         log.info("Metodo: {}, para obtener cliente por nombre de usuario: {}",
                 "[findCustomerByUsername]", username);
 
-        return Optional.ofNullable(this.repository.findByCustomerUsername(username)
-                .map(this.customerDTOMapper::customerLoginDTO)
-                .orElseThrow(() -> new CustomerNotFoundException(
-                        String.format(ExceptionMessage.USERNAME_NOT_FOUND.getMessage(), username))));
+        return this.repository.findByCustomerUsername(username)
+                .map(this.customerDTOMapper::customerLoginDTO);
     }
 
     /**

@@ -24,7 +24,7 @@ public interface AccountRepositoryPort {
     /**
      * Method to save the account.
      *
-     * @param account domain data for account.
+     * @param account    domain data for account.
      * @param customerId customer id.
      * @return Account domain data for account
      */

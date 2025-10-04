@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * DTO that has the account validate reques information.
@@ -20,5 +19,4 @@ public record AccountRequestDTO(@NotNull BankAccountType accountType, @NotNull @
                                 @NotNull Boolean status, @NotNull @Pattern(
         regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
         message = "Debe ser un UUID válido"
-) UUID customerId) {
-}
+) String customerId) { }

@@ -1,6 +1,7 @@
-package com.co.technicaltest.domain.model;
+package com.co.technicaltest.domain.event;
 
 import com.co.technicaltest.domain.enums.EventType;
+import com.co.technicaltest.domain.model.Account;
 import lombok.Data;
 
 /**

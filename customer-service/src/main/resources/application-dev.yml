@@ -56,6 +56,8 @@ logging:
     org:
       hibernate:
         SQL: debug
+    #org.apache.kafka.clients.consumer: DEBUG
+    #org.springframework.kafka.listener: DEBUG
 
 #Actuator
 management:
@@ -68,7 +70,8 @@ management:
 
 #Kafka config server
 kafka-config:
-  bootstrapServers: kafka:9092
+  bootstrapServers: localhost:29092 #local
+  #bootstrapServers: kafka:9092  #docker
 
 #kafka cncofig consumer
 kafka-consumer-config:

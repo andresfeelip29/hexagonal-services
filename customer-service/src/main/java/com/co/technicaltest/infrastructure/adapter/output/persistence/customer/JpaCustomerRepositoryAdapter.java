@@ -41,7 +41,9 @@ public class JpaCustomerRepositoryAdapter implements CustomerRepositoryPort {
     public Optional<Customer> findByCustomerUsername(String username) {
 
         CustomerEntity customerEntity =
-                this.repository.findCustomerEntitiesByUsername(username);
+                this.repository.findCustomerEntitiesByUsername(username)
+                        .orElseThrow(() -> new CustomerNotFoundException(
+                                String.format(ExceptionMessage.USERNAME_NOT_FOUND.getMessage(), username)));
 
         return Optional.of(this.costumerMapper.customerEntityToCustomer(customerEntity));
     }

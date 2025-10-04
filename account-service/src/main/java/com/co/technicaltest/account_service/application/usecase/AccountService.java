@@ -3,10 +3,12 @@ package com.co.technicaltest.account_service.application.usecase;
 import com.co.technicaltest.account_service.application.dto.AccountRequestDTO;
 import com.co.technicaltest.account_service.application.dto.AccountResponseDTO;
 import com.co.technicaltest.account_service.application.mapper.AccountDTOMapper;
+import com.co.technicaltest.account_service.application.mapper.AccountEventMapper;
 import com.co.technicaltest.account_service.domain.exception.AccountNotFoundException;
 import com.co.technicaltest.account_service.domain.model.Account;
 import com.co.technicaltest.account_service.domain.port.input.AccountUseCase;
 import com.co.technicaltest.account_service.domain.port.output.AccountRepositoryPort;
+import com.co.technicaltest.account_service.domain.port.output.messaging.publisher.AccountMessagePublisher;
 import com.co.technicaltest.account_service.infrastructure.shared.enums.ExceptionMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Use case port implemetation for Customer.
@@ -32,11 +35,19 @@ public class AccountService implements AccountUseCase {
 
     private final AccountDTOMapper mapper;
 
+    private final AccountMessagePublisher accountMessagePublisher;
+
+    private final AccountEventMapper accountEventMapper;
+
 
     public AccountService(AccountRepositoryPort repository,
-                          AccountDTOMapper mapper) {
+                          AccountDTOMapper mapper,
+                          AccountMessagePublisher accountMessagePublisher,
+                          AccountEventMapper accountEventMapper) {
         this.repository = repository;
         this.mapper = mapper;
+        this.accountMessagePublisher = accountMessagePublisher;
+        this.accountEventMapper = accountEventMapper;
     }
 
     /**
@@ -80,20 +91,26 @@ public class AccountService implements AccountUseCase {
 
         if (Objects.isNull(account)) return Optional.empty();
 
+        //TODO: logica para veriricarion de cliente en tabla espejo
+
         Account accountCreated =
                 this.mapper.toAccountRequest(account);
-
-        accountCreated.balanceIsLessThanZero();
-        accountCreated.setBankAccountNumber();
 
         log.info("Metodo: {}, para guardar cuenta con numero generado: {}",
                 "[saveAccount]", accountCreated.getAccountNumber());
 
+        accountCreated.balanceIsLessThanZero();
+        accountCreated.setBankAccountNumber();
 
-        //TODO: Logica para publicar evento al servicio cliente al crear cuenta
+        UUID customerId = UUID.fromString
+                (account.customerId());
 
         return this.repository.saveAccount(accountCreated)
-                .map(this.mapper::toAccountResponseDTO);
+                .map(saved -> {
+                    this.accountMessagePublisher.publish(this.accountEventMapper.toCreateAccountEvent(saved),
+                            customerId);
+                    return this.mapper.toAccountResponseDTO(saved);
+                });
     }
 
     /**
@@ -113,10 +130,15 @@ public class AccountService implements AccountUseCase {
 
         accountUpdated.balanceIsLessThanZero();
 
-        //TODO: Logica para publicar evento al servicio cliente al actualizar cuenta
+        UUID customerId = UUID.fromString
+                (account.customerId());
 
         return this.repository.updateAccount(accountUpdated, accountId)
-                .map(this.mapper::toAccountResponseDTO);
+                .map(updated -> {
+                    this.accountMessagePublisher.publish(this.accountEventMapper.toCreateAccountEvent(updated),
+                            customerId);
+                    return this.mapper.toAccountResponseDTO(updated);
+                });
     }
 
     /**
@@ -129,10 +151,12 @@ public class AccountService implements AccountUseCase {
         log.info("Metodo: {}, para eliminar cuenta por id: {}",
                 "[deleteAccount]", accountId);
 
-        //TODO: Logica para publicar evento al servicio cliente al eliminar cuenta
-
-
         this.repository.deleteAccount(accountId);
+
+
+        //TODO:agregar logica para que devuelva el usuario toca agregar la logica de la tablad de usuari
+        //this.accountMessagePublisher.publish(this.accountEventMapper.toCreateAccountEvent(updated),account.customerId());
+
     }
 
     /**
@@ -151,7 +175,6 @@ public class AccountService implements AccountUseCase {
 
         account.setBalance(newBalance);
         account.balanceIsLessThanZero();
-
 
         //TODO: Logica para publicar evento al servicio cliente al actualizar cuenta
         //TODO: Logica para publicar evento al servicio transacion que esta se realizo correctamente o hubo fallo

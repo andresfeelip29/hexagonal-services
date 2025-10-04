@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -45,6 +46,12 @@ public class AuthGlobalExceptionHandler {
     @ExceptionHandler(value = {BadCredentialsException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleException(BadCredentialsException e) {
+        return this.buildErrorResponse(e, e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {InternalAuthenticationServiceException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleException(InternalAuthenticationServiceException e) {
         return this.buildErrorResponse(e, "Credenciales de acceso incorrectas!", HttpStatus.BAD_REQUEST);
     }
 
@@ -62,6 +69,7 @@ public class AuthGlobalExceptionHandler {
         }
         return ResponseEntity.status(ex.status()).body(error);
     }
+
 
     @ExceptionHandler(value = {Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

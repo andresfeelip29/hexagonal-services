@@ -50,7 +50,7 @@ public interface CustomerRepositoryPort {
      * Method for update customer
      *
      * @param customer data information.
-     * @param id UUUID for intentificacion customer.
+     * @param id       UUUID for intentificacion customer.
      * @return Optional<Customer> customer data domain
      */
     Optional<Customer> updateCustomer(Customer customer, UUID id);
@@ -60,7 +60,7 @@ public interface CustomerRepositoryPort {
      *
      * @param customerId ID customer.
      */
-    void deleteCustomer( UUID customerId);
+    void deleteCustomer(UUID customerId);
 
 
     /**

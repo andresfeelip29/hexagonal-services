@@ -50,15 +50,29 @@ services:
     container_name: kafka
     ports:
       - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_NODE_ID: 1
       KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:29093"
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:29093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+
+      #listeners solo en docker
+      #KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:29093
+      #KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      #KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      #KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      #KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      # Listeners: uno externo (localhost), uno interno (kafka)
+      KAFKA_LISTENERS: PLAINTEXT://:9092,EXTERNAL://:29092,CONTROLLER://:29093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+
       CLUSTER_ID: "YjA0NDQyZjBjYjQzNDExN2"
     volumes:
       - data-kafka:/var/lib/kafka/data
@@ -67,6 +81,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: always
     networks:
       - devsu
 
@@ -79,9 +94,9 @@ services:
     entrypoint: [ "/bin/bash", "-c" ]
     command: >
       "
-      kafka-topics --create --if-not-exists --topic customer-events --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092 &&
-      kafka-topics --create --if-not-exists --topic account-events --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092 &&
-      kafka-topics --create --if-not-exists --topic transaction-events --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092 &&
+      kafka-topics --create --if-not-exists --topic customer-events --partitions 1 --replication-factor 1 --bootstrap-server kafka:9092 &&
+      kafka-topics --create --if-not-exists --topic account-events --partitions 1 --replication-factor 1 --bootstrap-server kafka:9092 &&
+      kafka-topics --create --if-not-exists --topic transaction-events --partitions 1 --replication-factor 1 --bootstrap-server kafka:9092 &&
       echo '✅ Tópicos creados correctamente'
       "
     restart: "on-failure"
@@ -99,6 +114,7 @@ services:
       KAFKA_BROKERCONNECT: "kafka:9092"
     depends_on:
       - kafka
+    restart: always
     networks:
       - devsu
 

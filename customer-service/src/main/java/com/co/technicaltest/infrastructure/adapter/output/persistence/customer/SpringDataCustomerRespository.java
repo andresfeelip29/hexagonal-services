@@ -30,5 +30,5 @@ public interface SpringDataCustomerRespository extends JpaRepository<CustomerEnt
      * @param username customer username.
      * @return CustomerEntity entity customer
      */
-    CustomerEntity findCustomerEntitiesByUsername(String username);
+    Optional<CustomerEntity> findCustomerEntitiesByUsername(String username);
 }

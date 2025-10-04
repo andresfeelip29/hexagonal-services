@@ -2,7 +2,10 @@ package com.co.technicaltest.auth_service.application.service;
 
 import com.co.technicaltest.auth_service.application.enums.ExceptionMessage;
 import com.co.technicaltest.auth_service.domain.port.output.ClientRepositoryPort;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,14 +40,25 @@ public class UserService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) {
-        return this.repository.findByUsernameOnCustomerService(username)
-                .map(user -> new User(username, user.password(),
-                        true,
-                        true,
-                        true,
-                        true,
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))))
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        String.format(ExceptionMessage.USERNAME_NOT_FOUND.getMessage(), username)));
+        try {
+            return this.repository.findByUsernameOnCustomerService(username)
+                    .map(user -> new User(
+                            username,
+                            user.password(),
+                            true,
+                            true,
+                            true,
+                            true,
+                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                    ))
+                    .orElseThrow(() -> new UsernameNotFoundException(
+                            String.format(ExceptionMessage.USERNAME_NOT_FOUND.getMessage(), username)
+                    ));
+        } catch (FeignException.NotFound ex) {
+            throw new UsernameNotFoundException(
+                    String.format(ExceptionMessage.USERNAME_NOT_FOUND.getMessage(), username), ex);
+        } catch (FeignException.BadRequest ex) {
+            throw new BadCredentialsException("credenciales de acceso incorrectas o no esta registrado en sistemas!", ex);
+        }
     }
 }

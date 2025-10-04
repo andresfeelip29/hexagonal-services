@@ -1,6 +1,6 @@
 package com.co.technicaltest.account_service.domain.exception;
 
-import com.co.devsutest.common.exception.DomainException;
+;
 
 public class AccountNotFoundException extends RuntimeException {
     public AccountNotFoundException(String message) {

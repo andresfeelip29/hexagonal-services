@@ -69,6 +69,8 @@ logging:
     org:
       hibernate:
         SQL: debug
+    #org.apache.kafka.clients.consumer: DEBUG
+    #org.springframework.kafka.listener: DEBUG
 
 #Actuator
 management:
@@ -81,7 +83,8 @@ management:
 
 #Kafka config server
 kafka-config:
-  bootstrapServers: kafka:9092
+  bootstrapServers: localhost:29092 # --> local
+  #bootstrapServers: kafka:9092  #---> docker
 
 #kafka config consumer
 kafka-consumer-config:
@@ -110,13 +113,13 @@ kafka-producer-config:
   bufferMemory: 33554432
 
 
-  #Topics kafka
-  customer-service:
-    customer-topic-name: customer-events
-    customer-spring-id: customer-topic-listener
-    customer-group-id: customer-topic-group
+#Topics kafka
+customer-service:
+  customer-topic-name: customer-events
+  customer-spring-id: customer-topic-listener
+  customer-group-id: customer-topic-group
 
-  transaction-service:
-    transaction-topic-name: transaction-events
-    transaction-spring-id: transaction-topic-listener
-    transaction-group-id: transaction-topic-group
+transaction-service:
+  transaction-topic-name: transaction-events
+  transaction-spring-id: transaction-topic-listener
+  transaction-group-id: transaction-topic-group

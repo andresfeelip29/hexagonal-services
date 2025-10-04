@@ -2,9 +2,11 @@ package com.co.technicaltest.infrastructure.adapter.input.messaging.consumer;
 
 
 import com.co.technicaltest.domain.enums.EventType;
-import com.co.technicaltest.domain.model.AccountEvent;
+import com.co.technicaltest.domain.event.AccountEvent;
 import com.co.technicaltest.domain.port.input.messaging.listener.AccountMessageListener;
+import com.co.technicaltest.domain.port.input.messaging.listener.KafkaConsumerPort;
 import com.co.technicaltest.infrastructure.shared.helper.KafkaMessageHelper;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -23,14 +25,14 @@ import java.util.UUID;
  */
 @Slf4j
 @Component
-public class AccountKafkaListener implements KafkaConsumer<String> {
+public class AccountKafkaConsumerAdapter implements KafkaConsumerPort<String> {
 
 
     private final AccountMessageListener accountMessageListener;
 
     private final KafkaMessageHelper kafkaMessageHelper;
 
-    public AccountKafkaListener(AccountMessageListener accountMessageListener, KafkaMessageHelper kafkaMessageHelper) {
+    public AccountKafkaConsumerAdapter(AccountMessageListener accountMessageListener, KafkaMessageHelper kafkaMessageHelper) {
         this.accountMessageListener = accountMessageListener;
         this.kafkaMessageHelper = kafkaMessageHelper;
     }
@@ -48,7 +50,7 @@ public class AccountKafkaListener implements KafkaConsumer<String> {
                         @Header(KafkaHeaders.RECEIVED_PARTITION) Integer partition,
                         @Header(KafkaHeaders.OFFSET) Long offset) {
 
-        log.info("{} se recibe mensaje para creacion de cuentas asociada al usuario {} , particion {} y offsets {}",
+        log.info("Se recibe mensaje: {} para creacion de cuentas asociada al usuario id: {} , particion {} y offsets {}",
                 messages,
                 key,
                 partition,
@@ -56,7 +58,8 @@ public class AccountKafkaListener implements KafkaConsumer<String> {
 
         UUID customerId = this.kafkaMessageHelper.uuidFromString(key);
 
-        AccountEvent accountEvent = this.kafkaMessageHelper.getEventPayload(messages, AccountEvent.class);
+        AccountEvent accountEvent = this.kafkaMessageHelper
+                .getEventPayload(messages, AccountEvent.class);
 
         if (!Objects.isNull(accountEvent)) {
             if (accountEvent.getEventType() == EventType.ACCOUNT_CREATED ||
