@@ -89,8 +89,25 @@ kafka-consumer-config:
   autoStartup: true
   pollTimeoutMs: 3000
 
-#Topics kafka
+#Kafka producer config
+kafka-producer-config:
+  keySerializer: org.apache.kafka.common.serialization.StringSerializer
+  valueSerializer: org.apache.kafka.common.serialization.StringSerializer
+  acks: all
+  retries: 3
+  batchSize: 16384
+  lingerMs: 5
+  bufferMemory: 33554432
+
+
+#Topics customer kafka
 customer-service:
   customer-topic-name: customer-events
   customer-spring-id: customer-topic-listener
   customer-group-id: customer-topic-group
+
+#Topics account kafka
+account-service:
+  customer-topic-name: account-events
+  customer-spring-id: account-topic-listener
+  customer-group-id: account-topic-group

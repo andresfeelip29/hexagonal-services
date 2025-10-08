@@ -113,13 +113,20 @@ kafka-producer-config:
   bufferMemory: 33554432
 
 
-#Topics kafka
+#Topics customer kafka
 customer-service:
   customer-topic-name: customer-events
   customer-spring-id: customer-topic-listener
   customer-group-id: customer-topic-group
 
+#Topics transaction kafka
 transaction-service:
   transaction-topic-name: transaction-events
   transaction-spring-id: transaction-topic-listener
   transaction-group-id: transaction-topic-group
+
+#Topics account kafka
+account-service:
+  customer-topic-name: account-events
+  customer-spring-id: account-topic-listener
+  customer-group-id: account-topic-group

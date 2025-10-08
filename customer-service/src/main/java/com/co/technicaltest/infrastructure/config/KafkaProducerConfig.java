@@ -1,4 +1,4 @@
-package com.co.technicaltest.account_service.infrastructure.config;
+package com.co.technicaltest.infrastructure.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.context.annotation.Bean;

@@ -6,6 +6,7 @@ import com.co.technicaltest.account_service.domain.model.Account;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Repositorio port for account.
@@ -23,12 +24,21 @@ public interface AccountRepositoryPort {
     List<Account> getAllAccounts();
 
     /**
-     * Method for find account by username
+     * Method for find account by account number
      *
      * @param accountNumber the accaunt number.
      * @return Optional<Account> account data domain
      */
     Optional<Account> findAccountByAccountNumber(String accountNumber);
+
+
+    /**
+     * Method for find account by id
+     *
+     * @param accountId the accaunt id.
+     * @return Optional<Account> account data domain
+     */
+    Optional<Account> findAccountByAccountId(Long accountId);
 
     /**
      * Method for save account
@@ -36,7 +46,7 @@ public interface AccountRepositoryPort {
      * @param account data account information for save.
      * @return Optional<Account> customer data domain
      */
-    Optional<Account> saveAccount(Account account);
+    Optional<Account> saveAccount(Account account, UUID customerId);
 
     /**
      * Method for update account

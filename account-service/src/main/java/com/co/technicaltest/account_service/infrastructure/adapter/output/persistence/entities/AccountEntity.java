@@ -45,4 +45,9 @@ public class AccountEntity {
     @Column(name = "estado")
     private Boolean status;
 
+    @NotNull
+    @ManyToOne( targetEntity = CustomerEntity.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "cliente_id")
+    private CustomerEntity customer;
+
 }

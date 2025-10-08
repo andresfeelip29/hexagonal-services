@@ -30,7 +30,7 @@ public class AccountEntity {
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
-    private CustomerEntity customerId;
+    private CustomerEntity customer;
 
     @NotEmpty
     @Column(name = "numero_cuenta")

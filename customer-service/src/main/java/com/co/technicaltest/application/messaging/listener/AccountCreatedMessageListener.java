@@ -20,15 +20,15 @@ import java.util.UUID;
  */
 @Slf4j
 @Service
-public class AccountMessageListenerImpl implements AccountMessageListener {
+public class AccountCreatedMessageListener implements AccountMessageListener {
 
 
     private final AccountRepositoryPort accountRepository;
 
     private final CustomerRepositoryPort customerRepository;
 
-    public AccountMessageListenerImpl(AccountRepositoryPort accountRepository,
-                                      CustomerRepositoryPort customerRepository) {
+    public AccountCreatedMessageListener(AccountRepositoryPort accountRepository,
+                                         CustomerRepositoryPort customerRepository) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
     }
@@ -61,6 +61,7 @@ public class AccountMessageListenerImpl implements AccountMessageListener {
     /**
      * {@inheritDoc}
      */
+    @Transactional
     @Override
     public void disassociateWithCustomer(Account account, UUID customerId) {
 

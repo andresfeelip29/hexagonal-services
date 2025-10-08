@@ -3,6 +3,7 @@ package com.co.technicaltest.infrastructure.adapter.input.messaging.consumer;
 
 import com.co.technicaltest.domain.enums.EventType;
 import com.co.technicaltest.domain.event.AccountEvent;
+import com.co.technicaltest.domain.model.Account;
 import com.co.technicaltest.domain.port.input.messaging.listener.AccountMessageListener;
 import com.co.technicaltest.domain.port.input.messaging.listener.KafkaConsumerPort;
 import com.co.technicaltest.infrastructure.shared.helper.KafkaMessageHelper;
@@ -14,8 +15,11 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Implementation to kafka listener .
@@ -28,13 +32,19 @@ import java.util.UUID;
 public class AccountKafkaConsumerAdapter implements KafkaConsumerPort<String> {
 
 
-    private final AccountMessageListener accountMessageListener;
-
     private final KafkaMessageHelper kafkaMessageHelper;
 
-    public AccountKafkaConsumerAdapter(AccountMessageListener accountMessageListener, KafkaMessageHelper kafkaMessageHelper) {
-        this.accountMessageListener = accountMessageListener;
+    private final Map<EventType, BiConsumer<Account, UUID>> eventHandlers;
+
+
+    public AccountKafkaConsumerAdapter(AccountMessageListener accountMessageListener,
+                                       KafkaMessageHelper kafkaMessageHelper) {
         this.kafkaMessageHelper = kafkaMessageHelper;
+        this.eventHandlers = Map.of(
+                EventType.ACCOUNT_CREATED, accountMessageListener::associateWithCustomer,
+                EventType.ACCOUNT_UPDATED, accountMessageListener::associateWithCustomer,
+                EventType.ACCOUNT_DELETED, accountMessageListener::disassociateWithCustomer
+        );
     }
 
 
@@ -61,13 +71,11 @@ public class AccountKafkaConsumerAdapter implements KafkaConsumerPort<String> {
         AccountEvent accountEvent = this.kafkaMessageHelper
                 .getEventPayload(messages, AccountEvent.class);
 
-        if (!Objects.isNull(accountEvent)) {
-            if (accountEvent.getEventType() == EventType.ACCOUNT_CREATED ||
-                    accountEvent.getEventType() == EventType.ACCOUNT_UPDATED) {
-                this.accountMessageListener.associateWithCustomer(accountEvent.getAccount(), customerId);
-            } else if (accountEvent.getEventType() == EventType.ACCOUNT_DELETED) {
-                this.accountMessageListener.disassociateWithCustomer(accountEvent.getAccount(), customerId);
-            }
+        if (!Objects.isNull(accountEvent) && !Objects.isNull(customerId)) {
+            this.eventHandlers
+                    .getOrDefault(accountEvent.getEventType(),
+                            (acc, id) -> log.warn("No es un evento valido: {}", accountEvent.getEventType()))
+                    .accept(accountEvent.getAccount(), customerId);
 
         }
 

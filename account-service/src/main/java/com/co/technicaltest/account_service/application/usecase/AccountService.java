@@ -91,21 +91,20 @@ public class AccountService implements AccountUseCase {
 
         if (Objects.isNull(account)) return Optional.empty();
 
-        //TODO: logica para veriricarion de cliente en tabla espejo
+        UUID customerId = UUID.fromString
+                (account.customerId());
+
 
         Account accountCreated =
                 this.mapper.toAccountRequest(account);
 
-        log.info("Metodo: {}, para guardar cuenta con numero generado: {}",
-                "[saveAccount]", accountCreated.getAccountNumber());
-
         accountCreated.balanceIsLessThanZero();
         accountCreated.setBankAccountNumber();
 
-        UUID customerId = UUID.fromString
-                (account.customerId());
+        log.info("Metodo: {}, para guardar cuenta con numero generado: {}",
+                "[saveAccount]", accountCreated.getAccountNumber());
 
-        return this.repository.saveAccount(accountCreated)
+        return this.repository.saveAccount(accountCreated, customerId)
                 .map(saved -> {
                     this.accountMessagePublisher.publish(this.accountEventMapper.toCreateAccountEvent(saved),
                             customerId);
@@ -135,7 +134,7 @@ public class AccountService implements AccountUseCase {
 
         return this.repository.updateAccount(accountUpdated, accountId)
                 .map(updated -> {
-                    this.accountMessagePublisher.publish(this.accountEventMapper.toCreateAccountEvent(updated),
+                    this.accountMessagePublisher.publish(this.accountEventMapper.toUpdateAccountEvent(updated),
                             customerId);
                     return this.mapper.toAccountResponseDTO(updated);
                 });
@@ -151,11 +150,14 @@ public class AccountService implements AccountUseCase {
         log.info("Metodo: {}, para eliminar cuenta por id: {}",
                 "[deleteAccount]", accountId);
 
+        Account account = this.repository.findAccountByAccountId(accountId)
+                .orElseThrow(() -> new AccountNotFoundException(
+                        String.format(ExceptionMessage.ACCOUNT_NUMBER_NOT_FOUND.getMessage(), accountId.toString())));
+
         this.repository.deleteAccount(accountId);
 
-
-        //TODO:agregar logica para que devuelva el usuario toca agregar la logica de la tablad de usuari
-        //this.accountMessagePublisher.publish(this.accountEventMapper.toCreateAccountEvent(updated),account.customerId());
+        this.accountMessagePublisher.publish(this.accountEventMapper.toDeleteAccountEvent(account),
+                account.getCustomer().getCustomerId());
 
     }
 
@@ -176,9 +178,12 @@ public class AccountService implements AccountUseCase {
         account.setBalance(newBalance);
         account.balanceIsLessThanZero();
 
-        //TODO: Logica para publicar evento al servicio cliente al actualizar cuenta
-        //TODO: Logica para publicar evento al servicio transacion que esta se realizo correctamente o hubo fallo
 
         this.repository.updateBalanceAccount(accountNumber, newBalance);
+
+        this.accountMessagePublisher.publish(this.accountEventMapper.toUpdateAccountEvent(account),
+                account.getCustomer().getCustomerId());
+
+        //TODO: Logica para publicar evento al servicio transacion que esta se realizo correctamente o hubo fallo
     }
 }

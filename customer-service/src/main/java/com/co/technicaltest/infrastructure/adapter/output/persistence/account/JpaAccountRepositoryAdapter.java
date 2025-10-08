@@ -61,7 +61,7 @@ public class JpaAccountRepositoryAdapter implements AccountRepositoryPort {
         AccountEntity accountEntity =
                 this.accountMapper.accountToAccountEntity(account);
 
-        accountEntity.setCustomerId(customerEntity);
+        accountEntity.setCustomer(customerEntity);
 
         this.accountRepository.save(accountEntity);
         return account;

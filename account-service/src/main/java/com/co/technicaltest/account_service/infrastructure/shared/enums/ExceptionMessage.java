@@ -9,6 +9,8 @@ package com.co.technicaltest.account_service.infrastructure.shared.enums;
 public enum ExceptionMessage {
 
     USER_NOT_FOUND("No existe usuario registrado en sistema con id: %d!"),
+    CUSTOMER_NOT_FOUND("No existe usuario registrado en sistema con id: %S!"),
+    CUSTOMER_CREATED_EVENT_ERROR("No se pudo crear usuario con id: %S , en evento transmitido!"),
     USERNAME_NOT_FOUND("No existe usuario registrado en sistema con nombre de usuario: %s!"),
     ACCOUNT_NOT_FOUND("No existe cuenta registrada en sistema con id: %d!"),
     ACCOUNT_ASSOCIATED_ERROR("No se pudo almacenar cuenta id: %d , a cliente con id: %d!"),

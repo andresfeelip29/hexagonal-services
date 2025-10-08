@@ -4,9 +4,11 @@ import com.co.technicaltest.application.dto.CustomerLoginResponseDTO;
 import com.co.technicaltest.application.dto.CustomerResponseDTO;
 import com.co.technicaltest.application.exception.CustomerNotFoundException;
 import com.co.technicaltest.application.mapper.CustomerDTOMapper;
+import com.co.technicaltest.application.mapper.CustomerEventMapper;
 import com.co.technicaltest.domain.model.Customer;
 import com.co.technicaltest.domain.port.input.CustomerUseCase;
 import com.co.technicaltest.domain.port.output.CustomerRepositoryPort;
+import com.co.technicaltest.domain.port.output.messaging.publisher.CustomerMessagePublisher;
 import com.co.technicaltest.infrastructure.shared.enums.ExceptionMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,9 +33,18 @@ public class CustomerService implements CustomerUseCase {
 
     private final CustomerDTOMapper customerDTOMapper;
 
-    public CustomerService(CustomerRepositoryPort repository, CustomerDTOMapper customerDTOMapper) {
+    private final CustomerMessagePublisher customerMessagePublisher;
+
+    private final CustomerEventMapper customerEventMapper;
+
+    public CustomerService(CustomerRepositoryPort repository,
+                           CustomerDTOMapper customerDTOMapper,
+                           CustomerMessagePublisher customerMessagePublisher,
+                           CustomerEventMapper customerEventMapper) {
         this.repository = repository;
         this.customerDTOMapper = customerDTOMapper;
+        this.customerMessagePublisher = customerMessagePublisher;
+        this.customerEventMapper = customerEventMapper;
     }
 
     /**
@@ -96,7 +107,10 @@ public class CustomerService implements CustomerUseCase {
                 "[saveCustomer]", customer.getCustomerId().toString());
 
         return this.repository.saveCustomer(customer)
-                .map(this.customerDTOMapper::toCustomerDTO);
+                .map(saved -> {
+                    this.customerMessagePublisher.publish(this.customerEventMapper.toCreateCustomerEvent(saved));
+                    return this.customerDTOMapper.toCustomerDTO(saved);
+                });
 
     }
 
@@ -113,7 +127,10 @@ public class CustomerService implements CustomerUseCase {
         if (Objects.isNull(customer)) return Optional.empty();
 
         return this.repository.updateCustomer(customer, id)
-                .map(this.customerDTOMapper::toCustomerDTO);
+                .map(update -> {
+                    this.customerMessagePublisher.publish(this.customerEventMapper.toUpdateCustomerEvent(update));
+                    return this.customerDTOMapper.toCustomerDTO(update);
+                });
     }
 
     /**
@@ -126,7 +143,13 @@ public class CustomerService implements CustomerUseCase {
         log.info("Metodo: {}, para eliminar cliente por id: {}",
                 "[deleteCustomer]", customerId.toString());
 
+        Customer customer = this.repository.findByCustomerId(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException(
+                        String.format(ExceptionMessage.USERNAME_NOT_FOUND.getMessage(), customerId.toString())));
+
         this.repository.deleteCustomer(customerId);
+
+        this.customerMessagePublisher.publish(this.customerEventMapper.toDeleteCustomerEvent(customer));
 
     }
 

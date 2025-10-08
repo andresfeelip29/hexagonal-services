@@ -14,11 +14,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccountEventMapper {
 
-
     public AccountEvent toCreateAccountEvent(Account account) {
         return AccountEvent.builder()
                 .account(account)
                 .eventType(EventType.ACCOUNT_CREATED)
+                .build();
+    }
+
+    public AccountEvent toUpdateAccountEvent(Account account) {
+        return AccountEvent.builder()
+                .account(account)
+                .eventType(EventType.ACCOUNT_UPDATED)
+                .build();
+    }
+
+    public AccountEvent toDeleteAccountEvent(Account account) {
+        return AccountEvent.builder()
+                .account(account)
+                .eventType(EventType.ACCOUNT_DELETED)
                 .build();
     }
 }

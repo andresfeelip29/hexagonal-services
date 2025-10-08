@@ -23,6 +23,7 @@ public class Account {
     private BankAccountType accountType;
     private BigDecimal balance;
     private Boolean status;
+    private Customer customer;
 
     public void setBankAccountNumber() {
         ThreadLocalRandom random = ThreadLocalRandom.current();

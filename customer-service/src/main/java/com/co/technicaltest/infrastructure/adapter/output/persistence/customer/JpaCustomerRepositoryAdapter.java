@@ -3,7 +3,6 @@ package com.co.technicaltest.infrastructure.adapter.output.persistence.customer;
 import com.co.technicaltest.application.exception.CustomerNotFoundException;
 import com.co.technicaltest.domain.model.Customer;
 import com.co.technicaltest.domain.port.output.CustomerRepositoryPort;
-import com.co.technicaltest.infrastructure.adapter.output.persistence.entities.AccountEntity;
 import com.co.technicaltest.infrastructure.adapter.output.persistence.entities.CustomerEntity;
 import com.co.technicaltest.infrastructure.mapper.CostumerMapper;
 import com.co.technicaltest.infrastructure.shared.enums.ExceptionMessage;

@@ -1,4 +1,4 @@
-package com.co.technicaltest.account_service.infrastructure.config;
+package com.co.technicaltest.infrastructure.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "kafka-producer-config")
 public class KafkaProducerConfigData {
-
     private String keySerializer;
     private String valueSerializer;
     private String acks;
@@ -22,5 +21,4 @@ public class KafkaProducerConfigData {
     private Integer batchSize;
     private Integer lingerMs;
     private Integer bufferMemory;
-
 }

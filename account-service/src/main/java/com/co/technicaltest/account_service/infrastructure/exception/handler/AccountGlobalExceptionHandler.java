@@ -50,9 +50,9 @@ public class AccountGlobalExceptionHandler {
         return this.buildErrorResponse(e, e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = {ClientNotFoundException.class})
+    @ExceptionHandler(value = {CustomerNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorResponse> handleException(ClientNotFoundException e) {
+    public ResponseEntity<ErrorResponse> handleException(CustomerNotFoundException e) {
         return this.buildErrorResponse(e, e.getMessage(), HttpStatus.NOT_FOUND);
     }
 

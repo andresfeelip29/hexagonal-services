@@ -43,7 +43,7 @@ public class CustomerEntity extends PersonEntity {
     @Column(name = "estado")
     private Boolean status;
 
-    @OneToMany(mappedBy = "customerId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AccountEntity> accounts;
 
     public void removeAccount(AccountEntity account) {

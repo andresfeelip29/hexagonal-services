@@ -17,6 +17,13 @@ import java.util.Objects;
 @Component
 public class AccountMapper {
 
+
+    private final CustomerMapper customerMapper;
+
+    public AccountMapper(CustomerMapper customerMapper) {
+        this.customerMapper = customerMapper;
+    }
+
     public Account accountEntityToAccount(AccountEntity accountEntity) {
         return Account.builder()
                 .accountId(accountEntity.getId())
@@ -24,6 +31,7 @@ public class AccountMapper {
                 .accountType(accountEntity.getAccountType())
                 .balance(accountEntity.getBalance())
                 .status(accountEntity.getStatus())
+                .customer(this.customerMapper.toCustomer(accountEntity.getCustomer()))
                 .build();
     }
 
@@ -37,8 +45,8 @@ public class AccountMapper {
     }
 
     public AccountEntity updateAccountEntity(AccountEntity accountEntity, Account account) {
-        accountEntity.setAccountType(accountEntity.getAccountType());
-        accountEntity.setBalance(accountEntity.getBalance());
+        accountEntity.setAccountType(account.getAccountType());
+        accountEntity.setBalance(account.getBalance());
         accountEntity.setStatus(account.getStatus());
         return accountEntity;
     }
