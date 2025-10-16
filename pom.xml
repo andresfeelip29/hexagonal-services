@@ -9,6 +9,7 @@
         <module>registry-server</module>
         <module>customer-service</module>
         <module>account-service</module>
+        <module>transaction-service</module>
     </modules>
 
     <parent>

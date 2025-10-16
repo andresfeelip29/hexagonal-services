@@ -1,6 +1,5 @@
 package com.co.technicaltest.account_service.domain.port.input.messaging.listener;
 
-import com.co.technicaltest.account_service.domain.event.CustomerEvent;
 import com.co.technicaltest.account_service.domain.model.Customer;
 
 /**

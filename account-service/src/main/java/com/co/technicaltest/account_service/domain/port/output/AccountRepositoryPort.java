@@ -44,6 +44,7 @@ public interface AccountRepositoryPort {
      * Method for save account
      *
      * @param account data account information for save.
+     * @param customerId customer identification.
      * @return Optional<Account> customer data domain
      */
     Optional<Account> saveAccount(Account account, UUID customerId);

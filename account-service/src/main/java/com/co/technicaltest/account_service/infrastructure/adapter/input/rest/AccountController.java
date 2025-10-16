@@ -5,6 +5,7 @@ import com.co.technicaltest.account_service.application.dto.AccountResponseDTO;
 import com.co.technicaltest.account_service.domain.port.input.AccountUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/cuentas")
+@Tag(name = "Cuentas" , description = "API para cuentas")
 public class AccountController {
 
     private final AccountUseCase accountUseCase;

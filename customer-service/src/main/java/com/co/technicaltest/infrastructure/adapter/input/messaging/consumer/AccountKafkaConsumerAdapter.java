@@ -7,7 +7,6 @@ import com.co.technicaltest.domain.model.Account;
 import com.co.technicaltest.domain.port.input.messaging.listener.AccountMessageListener;
 import com.co.technicaltest.domain.port.input.messaging.listener.KafkaConsumerPort;
 import com.co.technicaltest.infrastructure.shared.helper.KafkaMessageHelper;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -19,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * Implementation to kafka listener .

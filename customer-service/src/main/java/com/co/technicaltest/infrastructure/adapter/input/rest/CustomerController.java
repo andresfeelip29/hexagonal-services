@@ -8,6 +8,7 @@ import com.co.technicaltest.domain.model.Customer;
 import com.co.technicaltest.domain.port.input.CustomerUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/clientes")
+@Tag(name = "Clientes" , description = "API para clientes")
 public class CustomerController {
 
 

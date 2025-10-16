@@ -1,0 +1,111 @@
+spring:
+  application:
+    name: transaction-service
+#Data base config
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      username: mongouser
+      password: mongopass
+      database: db_movimiento
+      authentication-database: admin
+      auto-index-creation: true
+#Oauth2 client
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth-service/oauth2/default
+      client:
+        registration:
+          transaction-service:
+            provider: spring
+            client-id: transaction
+            client-secret: 12345
+            authorization-grant-type: authorization_code
+            redirect-uri: http://transaction-service/api/v1/usuarios/auth/authorized
+            scope:
+              - openid
+              - profile
+              - read
+              - write
+            client-name: transaction-service
+        provider:
+          spring:
+            issuer-uri: http://auth-service/oauth2/default
+
+#Port
+server:
+  port: 0
+
+#Eureka Client
+eureka:
+  instance:
+    instance-id: "${spring.application.name}:${random.value}"
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+
+#Log
+logging:
+  file:
+    path: /app/logs
+  level:
+    org.springframework.data.mongodb: DEBUG
+    #org.apache.kafka.clients.consumer: DEBUG
+    #org.springframework.kafka.listener: DEBUG
+
+#Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      base-path: /actuator
+
+
+#Kafka config server
+kafka-config:
+  bootstrapServers: localhost:29092 #local
+  #bootstrapServers: kafka:9092  #docker
+
+#kafka cncofig consumer
+kafka-consumer-config:
+  keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+  valueDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+  autoOffsetReset: earliest
+  sessionTimeoutMs: 10000
+  heartbeatIntervalMs: 3000
+  maxPollIntervalMs: 300000
+  maxPartitionFetchBytesDefault: 1048576
+  maxPartitionFetchBytesBoostFactor: 1
+  maxPollRecords: 500
+  batchListener: false
+  concurrencyLevel: 3
+  autoStartup: true
+  pollTimeoutMs: 3000
+
+#Kafka producer config
+kafka-producer-config:
+  keySerializer: org.apache.kafka.common.serialization.StringSerializer
+  valueSerializer: org.apache.kafka.common.serialization.StringSerializer
+  acks: all
+  retries: 3
+  batchSize: 16384
+  lingerMs: 5
+  bufferMemory: 33554432
+
+
+#Topics transaction kafka
+transaction-service:
+  transaction-topic-name: transaction-events
+  transaction-spring-id: transaction-topic-listener
+  transaction-group-id: transaction-topic-group
+
+#Topics account kafka
+account-service:
+  customer-topic-name: account-events
+  customer-spring-id: account-topic-listener
+  customer-group-id: account-topic-group
